@@ -354,7 +354,7 @@ function createLabels(){
     if(!selR.has(rn))continue;
     const el=document.createElement('div');
     el.className='plabel'; el.dataset.r=rn;
-    el.style.color=col;
+    el.style.color=(col==='#FFA500')?'#B35900':(col==='#4E90E2')?'#1B4E8C':(col==='#7c4dbc')?'#5D3A8D':(col==='#16a085')?'#0F705D':(col==='#FF6B6B')?'#BF5050':col;
     el.textContent=rn;
     el.addEventListener('click',function(e){
       e.stopPropagation();
