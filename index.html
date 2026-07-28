@@ -286,6 +286,16 @@ window.onload=function(){
   map.addControl(new kakao.maps.MapTypeControl(),kakao.maps.ControlPosition.TOPRIGHT);
   buildList(); initPolys(); createMkrs(); createLabels(); createPostLabels(); drawPolys();
   addDepotMarker();
+  // 초기 화면을 실제 배송 권역 전체가 보이도록 자동으로 맞춤 (넓은 화면에서 너무 축소되어 보이는 문제 방지)
+  let initMinLat=90,initMaxLat=-90,initMinLng=180,initMaxLng=-180;
+  for(const c of CENTS){
+    if(c[0]<initMinLat)initMinLat=c[0];if(c[0]>initMaxLat)initMaxLat=c[0];
+    if(c[1]<initMinLng)initMinLng=c[1];if(c[1]>initMaxLng)initMaxLng=c[1];
+  }
+  map.setBounds(new kakao.maps.LatLngBounds(
+    new kakao.maps.LatLng(initMinLat-0.01,initMinLng-0.01),
+    new kakao.maps.LatLng(initMaxLat+0.01,initMaxLng+0.01)
+  ));
   kakao.maps.event.addListener(map,'idle',updateLabels);
   document.querySelectorAll('.rbtn').forEach(b=>b.addEventListener('click',function(){
     this.classList.toggle('on');this.classList.toggle('off');applyFilter();
@@ -295,11 +305,11 @@ window.onload=function(){
 
 function addDepotMarker(){
   // 카카오 지오코딩으로 사전 확인한 정확한 좌표 (경기 남양주시 오남읍 양지리 662)
-  const coords=new kakao.maps.LatLng(37.7015961850229,127.192997826654);
+  const coords=new kakao.maps.LatLng(37.70177063,127.19320307);
   const pinSvg='<svg xmlns="http://www.w3.org/2000/svg" width="40" height="52" viewBox="0 0 40 52">'
-    +'<path d="M20 0C11.16 0 4 7.16 4 16c0 11 16 34 16 34s16-23 16-34C36 7.16 28.84 0 20 0z" fill="#2F6FED"/>'
+    +'<path d="M20 0C11.16 0 4 7.16 4 16c0 11 16 34 16 34s16-23 16-34C36 7.16 28.84 0 20 0z" fill="#e74c3c"/>'
     +'<circle cx="20" cy="16" r="10" fill="#fff"/>'
-    +'<path d="M14 12h12l-6 9z" fill="#2F6FED"/>'
+    +'<path d="M14 12h12l-6 9z" fill="#e74c3c"/>'
     +'</svg>';
   const markerImage=new kakao.maps.MarkerImage(
     'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(pinSvg),
@@ -310,7 +320,7 @@ function addDepotMarker(){
   marker.setMap(map);
   kakao.maps.event.addListener(marker,'mouseover',function(){
     const tip=document.getElementById('tip');
-    tip.innerHTML='<b>🚚 남양주센터</b><br><span style="opacity:0.75;font-size:10px;">WF81 · 경기도 남양주시 오남읍 양지리 662</span>';
+    tip.innerHTML='<b style="color:#e67e22;font-size:12px;">🚚 WF81 남양주센터</b><br><span style="color:#fff;font-size:11px;">📍 경기도 남양주시 오남읍 양지리 662</span>';
     tip.style.display='block';
   });
   kakao.maps.event.addListener(marker,'mouseout',function(){
